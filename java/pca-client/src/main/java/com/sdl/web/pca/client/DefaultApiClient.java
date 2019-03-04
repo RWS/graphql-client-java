@@ -550,8 +550,13 @@ public class DefaultApiClient implements ApiClient {
                                                    int descendantLevels, Ancestor ancestor,
                                                    ContextData contextData) throws ApiClientException {
 
+        String query = "SitemapSubtree";
+        if (descendantLevels == 0) {
+            query = "SitemapSubtreeNoRecurse";
+
+        }
         GraphQLRequest graphQLRequest = new PCARequestBuilder()
-                .withQuery("SitemapSubtree")
+                .withQuery(query)
                 .withRecurseFragment("RecurseItems", descendantLevels)
                 .withNamespace(ns)
                 .withPublicationId(publicationId)
