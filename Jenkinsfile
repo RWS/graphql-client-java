@@ -31,7 +31,7 @@ pipeline {
                 //Build on JDK8 and deploy it to local repository:
                 withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                     withDockerContainer('maven:3.6-jdk-8-alpine') {
-                        sh "mvn -B -s $MAVEN_SETTINGS_PATH -Plocal-repository clean deploy"
+                        sh "mvn -B -s $MAVEN_SETTINGS_PATH -Plocal-repository clean source:jar deploy"
                     }
                 }
             }
