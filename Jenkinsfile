@@ -9,7 +9,7 @@ pipeline {
                 //DXA has to be able to be built on JDK11:
                 withDockerContainer("maven:3.6-jdk-11-slim") { 
                     //DXA has to be able to be build without SDL proprietary dependencies:
-                    sh "mvn dependency:purge-local-repository"
+                    sh "mvn dependency:purge-local-repository -DreResolve=false"
 
                     sh "mvn clean verify"
                 }
