@@ -9,9 +9,9 @@ pipeline {
                 //DXA has to be able to be built on JDK11:
                 withDockerContainer("maven:3.6-jdk-11-slim") { 
                     //DXA has to be able to be build without SDL proprietary dependencies:
-                    sh "mvn dependency:purge-local-repository -DreResolve=false"
+                    sh "mvn -B dependency:purge-local-repository -DreResolve=false"
 
-                    sh "mvn clean verify"
+                    sh "mvn -B clean verify"
                 }
             }
         }
@@ -21,7 +21,7 @@ pipeline {
             // Not on the develop branch, so build it, but do not install it.
             steps {
                 //Build on JDK8:
-                withDockerContainer("maven:3.6-jdk-8-alpine") { sh "mvn clean verify"}
+                withDockerContainer("maven:3.6-jdk-8-alpine") { sh "mvn -B clean verify"}
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
                 //Build on JDK8 and deploy it to local repository:
                 withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                     withDockerContainer('maven:3.6-jdk-8-alpine') {
-                        sh "mvn -s $MAVEN_SETTINGS_PATH -Plocal-repository clean deploy"
+                        sh "mvn -B -s $MAVEN_SETTINGS_PATH -Plocal-repository clean deploy"
                     }
                 }
             }
