@@ -1,46 +1,29 @@
-graphql-client
+SDL Dynamic Experience Delivery GraphQL client for Java
 ===
-SDL Digital Experience Accelerator GraphQL client for Java
 
 About
 -----
-The GraphQL client provides a public content API for the Java DXA framework in order to retrieve content from the new GraphQL endpoint exposed by the content service.
-
-We provide a strongly typed model built directly from the GraphQL schema used by the content service and also allow execution of general GraphQL requests.
-
-You can generate a strongly typed model for any GraphQL schema by using the tools provided under the relevant .NET or Java folders. Please see the DXA framework content providers for more information on how this client is used within the DXA framework.
-
+The GraphQL client provides a public content API for Java in order to retrieve content from the new GraphQL endpoint exposed by the Content Service.
 
 Support
 -------
 At SDL we take your investment in Digital Experience very seriously, and will do our best to support you throughout this journey. 
-If you encounter any issues with the Digital Experience Accelerator, please reach out to us via one of the following channels:
+If you encounter any issues with the Digital Experience Delivery, please reach out to us via one of the following channels:
 
-- Report issues directly in [this repository](https://github.com/sdl/graphql-client/issues)
+- Report issues directly in [this repository](https://github.com/sdl/graphql-client-java/issues)
 - Ask questions 24/7 on the SDL Web Community at https://tridion.stackexchange.com
 - Contact Technical Support through the SDL Support web portal at https://www.sdl.com/support
 
 Documentation
 -------------
-Documentation can be found online in the SDL documentation portal: http://docs.sdl.com/sdldxa20
+Documentation can be found online in the SDL documentation portal: https://docs.sdl.com/LiveContent/content/en-US/SDL%20Tridion%20Sites-v1/GUID-7CE1DB91-B63C-4A5F-9307-CE1C6B3A8911
 
-Repositories
-------------
-The following repositories with source code are available:
-
- - https://github.com/sdl/dxa-content-management - CM-side framework (.NET Template Building Blocks)
- - https://github.com/sdl/dxa-html-design - Whitelabel HTML Design
- - https://github.com/sdl/dxa-model-service - Model Service (Java)
- - https://github.com/sdl/dxa-modules - Modules (.NET and Java)
- - https://github.com/sdl/dxa-web-application-dotnet - ASP.NET MVC web application (including framework)
- - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application (including framework)
- - https://github.com/sdl/graphql-client - GraphQL client (.NET and Java)
 
 Branches and Contributions
 --------------------------
 We are using the following branching strategy:
 
- - `master` - Represents the latest stable version. This may be a pre-release version (tagged as `DXA x.y Sprint z`). Updated each development Sprint (approximately bi-weekly).
+ - `master` - Represents the latest stable version. This may be a pre-release version (tagged as `x.y Sprint z`). Updated each development Sprint (approximately bi-weekly).
  - `develop` - Represents the latest development version. Updated very frequently (typically nightly).
  - `release/x.y` - Represents the x.y Release. If hotfixes are applicable, they will be applied to the appropriate release branch so that the branch actually represents the initial release plus hotfixes.
 
@@ -58,7 +41,7 @@ Of course, it is also possible (and appreciated) to report an issue without asso
 
 License
 -------
-Copyright (c) 2014-2018 SDL Group.
+Copyright (c) 2014-2019 SDL Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
