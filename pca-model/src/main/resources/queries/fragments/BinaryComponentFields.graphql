@@ -10,7 +10,6 @@
 				downloadUrl
 				description
 				variantId
-				type
 			}
 		}
     }
