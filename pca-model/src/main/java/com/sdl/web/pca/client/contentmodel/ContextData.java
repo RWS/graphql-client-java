@@ -14,7 +14,7 @@ public class ContextData {
         return Collections.unmodifiableList(claimValues);
     }
 
-    public void addClaimValule(ClaimValue value) {
+    public void addClaimValue(ClaimValue value) {
         claimValues.add(value);
     }
 
