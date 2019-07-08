@@ -595,21 +595,21 @@ public class DefaultApiClient implements ApiClient {
         ContextData data = new ContextData();
         data.addClaimValues(globalContextData);
         // Add a default claim here to control model type returned by default
-        data.addClaimValule(createClaim(defaultModelType));
-        data.addClaimValule(createClaim(defaultContentType));
+        data.addClaimValue(createClaim(defaultModelType));
+        data.addClaimValue(createClaim(defaultContentType));
         // Add claim to control how tcdl links are rendered
-        data.addClaimValule(createClaim(tcdlLinkRenderingType));
+        data.addClaimValue(createClaim(tcdlLinkRenderingType));
         // Add claim to control how model-service plugin renders links
-        data.addClaimValule(createClaim(modelServiceLinkRenderingType));
+        data.addClaimValue(createClaim(modelServiceLinkRenderingType));
         // Add claim to control prefix urls
         if (tcdlLinkRenderingType != TcdlLinkRendering.ABSOLUTE) {
             return data;
         }
         if (!Strings.isNullOrEmpty(tcdlLinkUrlPrefix)) {
-            data.addClaimValule(createClaimTcdlLinkUrlPrefix(tcdlLinkUrlPrefix));
+            data.addClaimValue(createClaimTcdlLinkUrlPrefix(tcdlLinkUrlPrefix));
         }
         if (!Strings.isNullOrEmpty(tcdlBinaryLinkUrlPrefix)) {
-            data.addClaimValule(createClaimTcdlBinaryLinkUrlPrefix(tcdlBinaryLinkUrlPrefix));
+            data.addClaimValue(createClaimTcdlBinaryLinkUrlPrefix(tcdlBinaryLinkUrlPrefix));
         }
         return data;
     }

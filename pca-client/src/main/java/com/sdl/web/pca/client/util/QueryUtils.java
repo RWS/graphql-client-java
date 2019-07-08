@@ -39,7 +39,7 @@ public class QueryUtils {
     }
 
     public static String injectCustomMetaFilter(String query, String customMetaFilter) {
-        return query.replace("@customMetaArgs", isNullOrEmpty(customMetaFilter) ? "" : "(filter: \"{" + customMetaFilter + "}\")");
+        return query.replace("@customMetaArgs", isNullOrEmpty(customMetaFilter) ? "" : "(filter: \"" + customMetaFilter + "\")");
     }
 
      /**
