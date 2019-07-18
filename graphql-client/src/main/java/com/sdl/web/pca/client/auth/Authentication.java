@@ -9,7 +9,7 @@ public interface Authentication {
 
     /**
      * Adds authentication headers to given http request.
-     * @param request
+     * @param request Instance of the current HTTP request
      */
     void applyManualAuthentication(HttpRequest request);
 
