@@ -16,6 +16,7 @@ public interface GraphQLClient {
      * @param jsonEntity graphql query which needs to be executed against the graphql server
      * @param timeout    specify the timeout period in milliseconds
      * @return The GraphQL JSON string response with data and errors if any.
+     * @trows GraphQLClientException
      */
     String execute(String jsonEntity, int timeout) throws GraphQLClientException;
 
@@ -24,6 +25,7 @@ public interface GraphQLClient {
      *
      * @param jsonEntity graphql query which needs to be executed against the graphql server
      * @return The GraphQL JSON string response with data and errors if any.
+     * @trows GraphQLClientException
      */
     String execute(String jsonEntity) throws GraphQLClientException;
 
@@ -32,14 +34,14 @@ public interface GraphQLClient {
      *
      * @param request GraphQLRequest object which holds the information to execute the query.
      * @return The GraphQL JSON string response with data and errors if any.
-     * @throws IOException
+     * @trows GraphQLClientException
      */
     String execute(GraphQLRequest request) throws GraphQLClientException;
 
     /**
      * Adds default header to request.
-     * @param header
-     * @param value
+     * @param header HTTP Header name
+     * @param value HTTP Header value
      */
     void addDefaultHeader(String header, String value);
 }
