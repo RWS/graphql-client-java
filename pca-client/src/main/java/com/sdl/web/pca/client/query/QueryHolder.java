@@ -6,6 +6,8 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -13,8 +15,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Holds queries and fragments.
  */
 public class QueryHolder {
-    private Map<String, String> queries = new HashMap<>();
-    private Map<String, String> fragments = new HashMap<>();
+    private ConcurrentMap<String, String> queries = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, String> fragments = new ConcurrentHashMap<>();
 
     public String getQuery(String queryName) {
         return queries.computeIfAbsent(queryName,
