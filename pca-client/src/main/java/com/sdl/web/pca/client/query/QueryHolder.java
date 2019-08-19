@@ -4,8 +4,6 @@ import com.sdl.web.pca.client.exception.ApiClientException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
