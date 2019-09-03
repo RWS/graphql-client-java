@@ -173,7 +173,7 @@ public class PCARequestBuilder {
     public PCARequestBuilder withContextData(ContextData... data) {
         for (ContextData newData : data) {
             if (newData == null) continue;
-            this.claimValues.putAll(newData.getClaimValues().stream().collect(Collectors.toMap(x -> x.getUri(), x -> x, (x, y) -> y)));
+            this.claimValues.putAll(newData.getClaimValues().stream().filter(v -> v != null).collect(Collectors.toMap(x -> x.getUri(), x -> x, (x, y) -> y)));
         }
         return this;
     }
