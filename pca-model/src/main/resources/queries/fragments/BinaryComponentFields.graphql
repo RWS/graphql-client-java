@@ -1,4 +1,4 @@
-﻿fragment BinaryComponentFields on BinaryComponent {
+fragment BinaryComponentFields on BinaryComponent {
 	schemaId
     multiMedia  
 	variants@variantsArgs {

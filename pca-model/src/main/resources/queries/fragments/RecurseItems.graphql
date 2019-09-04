@@ -1,4 +1,4 @@
-﻿rfragment RecurseItems on TaxonomySitemapItem {  
+rfragment RecurseItems on TaxonomySitemapItem {  
     items {		  
 		...on TaxonomySitemapItem {
 			...TaxonomyItemFields		

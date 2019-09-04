@@ -1,4 +1,4 @@
-﻿fragment TaxonomyItemFields on TaxonomySitemapItem {
+fragment TaxonomyItemFields on TaxonomySitemapItem {
     id
     title
     originalTitle

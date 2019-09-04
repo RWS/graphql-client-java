@@ -1,4 +1,4 @@
-﻿fragment ComponentPresentationFields on ComponentPresentation {
+fragment ComponentPresentationFields on ComponentPresentation {
 	...ItemFields
 	component {
        ...ComponentFields

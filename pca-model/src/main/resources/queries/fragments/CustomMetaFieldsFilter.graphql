@@ -1,4 +1,4 @@
-﻿fragment CustomMetaFields on Item {
+fragment CustomMetaFields on Item {
   customMetas(filter: @customMetaFilter) {
     edges {
       node {
