@@ -1,4 +1,4 @@
-﻿fragment ItemFields on Item {
+fragment ItemFields on Item {
     id
     itemId
     itemType

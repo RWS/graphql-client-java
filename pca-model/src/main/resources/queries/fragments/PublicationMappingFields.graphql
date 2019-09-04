@@ -1,4 +1,4 @@
-﻿fragment PublicationMappingFields on PublicationMapping {
+fragment PublicationMappingFields on PublicationMapping {
     publicationId
     protocol
     domain

@@ -1,4 +1,4 @@
-﻿fragment PageFields on Page {
+fragment PageFields on Page {
 	url
 	...CustomMetaFields
 	includeContent? {
