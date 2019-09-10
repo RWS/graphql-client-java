@@ -15,7 +15,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,22 +26,25 @@ public class DefaultGraphQLClient implements GraphQLClient {
     private static final Logger LOG = getLogger(DefaultGraphQLClient.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private Authentication auth;
-    private CloseableHttpClient httpClient;
-    private String endpoint;
-    private Map<String, String> defaultHeaders = new HashMap<>();
+    private final Authentication auth;
+    private CloseableHttpClient httpClient = null;
+    private final String endpoint;
+    private final Map<String, String> defaultHeaders = new HashMap<>();
 
     public DefaultGraphQLClient(String endpoint, Map<String, String> defaultHeaders) {
-        this.httpClient = HttpClients.createDefault();
+        this(endpoint, defaultHeaders, null);
+    }
+
+    public DefaultGraphQLClient(String endpoint, Map<String, String> defaultHeaders, Authentication auth) {
         this.endpoint = endpoint;
         if (defaultHeaders != null) {
             this.defaultHeaders.putAll(defaultHeaders);
         }
+        this.auth = auth;
     }
 
-    public DefaultGraphQLClient(String endpoint, Map<String, String> defaultHeaders, Authentication auth) {
-        this(endpoint, defaultHeaders);
-        this.auth = auth;
+    public CloseableHttpClient createHttpClient() {
+        return HttpClients.createDefault();
     }
 
     @Override
@@ -52,39 +54,44 @@ public class DefaultGraphQLClient implements GraphQLClient {
 
     @Override
     public String execute(String jsonEntity, int timeout) throws GraphQLClientException {
-        LOG.debug("Requested entity: {}", jsonEntity);
+        try {
+            LOG.debug("Requested entity: {}", jsonEntity);
 
-        HttpPost httpPost = new HttpPost(endpoint);
-        defaultHeaders.forEach((key, value) -> httpPost.addHeader(key, value));
+            HttpPost httpPost = new HttpPost(endpoint);
+            defaultHeaders.forEach((key, value) -> httpPost.addHeader(key, value));
 
-        if (timeout > 0) {
-            RequestConfig params = RequestConfig.custom().setConnectTimeout(timeout).setSocketTimeout(timeout).build();
-            httpPost.setConfig(params);
-        }
-
-        StringEntity entity = new StringEntity(jsonEntity, ContentType.APPLICATION_JSON);
-        httpPost.setEntity(entity);
-
-        if (auth != null) {
-            auth.applyManualAuthentication(httpPost);
-        }
-
-        //Execute and get the response.
-        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-            InputStream contentStream = response.getEntity().getContent();
-
-            String contentString = IOUtils.toString(contentStream, "UTF-8");
-
-            if (response.getStatusLine().getStatusCode() != SC_OK) {
-                LOG.error("Response code is '" + response.getStatusLine().getStatusCode() +
-                        "'. The response message: " + contentString);
-                throw new GraphQLClientException("Unable to retrieve requested entity");
+            if (timeout > 0) {
+                RequestConfig params = RequestConfig.custom().setConnectTimeout(timeout).setSocketTimeout(timeout).build();
+                httpPost.setConfig(params);
             }
 
-            LOG.debug("Returned message: {}", contentString);
-            return contentString;
-        } catch (IOException e) {
-            throw new GraphQLClientException("Exception during requesting entity: " + jsonEntity, e);
+            StringEntity entity = new StringEntity(jsonEntity, ContentType.APPLICATION_JSON);
+            httpPost.setEntity(entity);
+
+            if (auth != null) {
+                auth.applyManualAuthentication(httpPost);
+            }
+
+            //Execute and get the response.
+            if (httpClient == null) httpClient = createHttpClient();
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                InputStream contentStream = response.getEntity().getContent();
+
+                String contentString = IOUtils.toString(contentStream, "UTF-8");
+
+                if (response.getStatusLine().getStatusCode() != SC_OK) {
+                    LOG.error("Response code is '" + response.getStatusLine().getStatusCode() +
+                            "'. The response message: " + contentString);
+                    throw new GraphQLClientException("Unable to retrieve requested entity");
+                }
+
+                LOG.debug("Returned message: {}", contentString);
+                return contentString;
+            } catch (Exception e) {
+                throw new GraphQLClientException("Exception during requesting entity: " + jsonEntity, e);
+            }
+        } finally {
+            defaultHeaders.clear();
         }
     }
 
@@ -103,7 +110,4 @@ public class DefaultGraphQLClient implements GraphQLClient {
         this.defaultHeaders.put(header, value);
     }
 
-    public void setHttpClient(CloseableHttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 }

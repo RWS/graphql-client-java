@@ -19,6 +19,8 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,8 +45,8 @@ public class DefaultGraphQLClientTest {
 
     @Before
     public void setup() {
-        client = new DefaultGraphQLClient(HOST, new HashMap<>(), null);
-        client.setHttpClient(httpClient);
+        client = spy(new DefaultGraphQLClient(HOST, new HashMap<>(), null));
+        doReturn(httpClient).when(client).createHttpClient();
     }
 
     @Test
