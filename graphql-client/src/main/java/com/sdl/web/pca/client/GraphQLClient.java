@@ -1,9 +1,8 @@
 package com.sdl.web.pca.client;
 
 import com.sdl.web.pca.client.exception.GraphQLClientException;
+import com.sdl.web.pca.client.exception.UnauthorizedException;
 import com.sdl.web.pca.client.request.GraphQLRequest;
-
-import java.io.IOException;
 
 /**
  * This interface enables java clients to connect to the GraphQL Service
@@ -18,7 +17,7 @@ public interface GraphQLClient {
      * @return The GraphQL JSON string response with data and errors if any.
      * @throws GraphQLClientException Thrown when request to GraphQL Service fail
      */
-    String execute(String jsonEntity, int timeout) throws GraphQLClientException;
+    String execute(String jsonEntity, int timeout) throws UnauthorizedException, GraphQLClientException;
 
     /**
      * This method can be used to execute the graphQL queries with no timeout.
@@ -27,7 +26,7 @@ public interface GraphQLClient {
      * @return The GraphQL JSON string response with data and errors if any.
      * @throws GraphQLClientException Thrown when request to GraphQL Service fail
      */
-    String execute(String jsonEntity) throws GraphQLClientException;
+    String execute(String jsonEntity) throws UnauthorizedException, GraphQLClientException;
 
     /**
      * This method can be used to execute the GraphQL queries against the GraphQL server for the GraphQLRequest parameter
@@ -36,7 +35,7 @@ public interface GraphQLClient {
      * @return The GraphQL JSON string response with data and errors if any.
      * @throws GraphQLClientException Thrown when request to GraphQL Service fail
      */
-    String execute(GraphQLRequest request) throws GraphQLClientException;
+    String execute(GraphQLRequest request) throws UnauthorizedException, GraphQLClientException;
 
     /**
      * Adds default header to request.

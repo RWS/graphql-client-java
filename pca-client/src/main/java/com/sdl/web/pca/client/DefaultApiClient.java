@@ -35,6 +35,7 @@ import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
 import com.sdl.web.pca.client.exception.ApiClientException;
 import com.sdl.web.pca.client.exception.GraphQLClientException;
+import com.sdl.web.pca.client.exception.UnauthorizedException;
 import com.sdl.web.pca.client.jsonmapper.ContentComponentDeserializer;
 import com.sdl.web.pca.client.jsonmapper.ItemDeserializer;
 import com.sdl.web.pca.client.jsonmapper.SitemapDeserializer;
@@ -580,6 +581,27 @@ public class DefaultApiClient implements ApiClient {
     }
 
     private JsonNode getJsonResult(GraphQLRequest request, String path) throws ApiClientException {
+        int attempt = 5;
+        UnauthorizedException[] exception = new UnauthorizedException[1];
+        while(attempt > 0) {
+            try {
+                attempt--;
+                return getJsonResultInternal(request, path);
+            } catch (UnauthorizedException ex) {
+                if (exception[0] == null) exception[0] = ex;
+                //left empty because of re-attempt
+            }
+            try {
+                Thread.currentThread().sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        throw new ApiClientException("Could not perform request after 5 attempts", exception[0]);
+    }
+
+    private JsonNode getJsonResultInternal(GraphQLRequest request, String path) throws ApiClientException, UnauthorizedException {
         try {
             String resultString = client.execute(request);
             JsonNode resultJson = MAPPER.readTree(resultString);
