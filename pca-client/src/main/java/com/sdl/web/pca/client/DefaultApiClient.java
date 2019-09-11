@@ -42,6 +42,8 @@ import com.sdl.web.pca.client.jsonmapper.SitemapDeserializer;
 import com.sdl.web.pca.client.query.PCARequestBuilder;
 import com.sdl.web.pca.client.request.GraphQLRequest;
 import com.sdl.web.pca.client.util.CmUri;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ import static com.sdl.web.pca.client.modelserviceplugin.ClaimHelper.createClaimT
 import static com.sdl.web.pca.client.modelserviceplugin.ClaimHelper.createClaimTcdlLinkUrlPrefix;
 
 public class DefaultApiClient implements ApiClient {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultApiClient.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private GraphQLClient client;
@@ -554,7 +557,6 @@ public class DefaultApiClient implements ApiClient {
         String query = "SitemapSubtree";
         if (descendantLevels == 0) {
             query = "SitemapSubtreeNoRecurse";
-
         }
         GraphQLRequest graphQLRequest = new PCARequestBuilder()
                 .withQuery(query)
@@ -581,7 +583,7 @@ public class DefaultApiClient implements ApiClient {
     }
 
     private JsonNode getJsonResult(GraphQLRequest request, String path) throws ApiClientException {
-        int attempt = 5;
+        int attempt = 3;
         UnauthorizedException[] exception = new UnauthorizedException[1];
         while(attempt > 0) {
             try {
@@ -589,7 +591,7 @@ public class DefaultApiClient implements ApiClient {
                 return getJsonResultInternal(request, path);
             } catch (UnauthorizedException ex) {
                 if (exception[0] == null) exception[0] = ex;
-                //left empty because of re-attempt
+                LOG.error("Could not perform query on " + path);
             }
             try {
                 Thread.currentThread().sleep(200);
@@ -598,7 +600,7 @@ public class DefaultApiClient implements ApiClient {
                 break;
             }
         }
-        throw new ApiClientException("Could not perform request after 5 attempts", exception[0]);
+        throw new ApiClientException("Could not perform query " + request + " after 3 attempts", exception[0]);
     }
 
     private JsonNode getJsonResultInternal(GraphQLRequest request, String path) throws ApiClientException, UnauthorizedException {
