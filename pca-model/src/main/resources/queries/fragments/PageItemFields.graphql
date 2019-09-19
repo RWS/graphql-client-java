@@ -1,4 +1,4 @@
-﻿fragment PageItemFields on Page {
+fragment PageItemFields on Page {
 	url
     itemId
     title

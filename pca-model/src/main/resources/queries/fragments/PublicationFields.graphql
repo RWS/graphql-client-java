@@ -1,4 +1,4 @@
-﻿fragment PublicationFields on Publication {
+fragment PublicationFields on Publication {
     publicationUrl
 	publicationPath
 	multimediaPath

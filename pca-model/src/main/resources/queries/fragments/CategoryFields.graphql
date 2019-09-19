@@ -1,4 +1,4 @@
-﻿fragment CategoryFields on Keyword {
+fragment CategoryFields on Keyword {
 	depth
     hasChildren
     description

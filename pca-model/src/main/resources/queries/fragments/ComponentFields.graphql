@@ -1,4 +1,4 @@
-﻿fragment ComponentFields on Component {
+fragment ComponentFields on Component {
 	id
     itemId
     itemType
