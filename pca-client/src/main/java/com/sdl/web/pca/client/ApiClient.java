@@ -31,6 +31,9 @@ import com.sdl.web.pca.client.util.CmUri;
 
 /**
  * This interface enables java clients to connect to the GraphQL Service.
+ * This class in not allowed to be reused in any form. Please create
+ * another exemplar any time you want it to use
+ * @See DefaultGraphQLClient.java defaultHeaders field
  */
 public interface ApiClient {
 
