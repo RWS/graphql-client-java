@@ -97,7 +97,7 @@ public interface ApiClient {
 
     /**
      * Returns model service link rendering type.
-     * @Deprecated use getModelServiceLinkRenderingType instead.
+     * @deprecated use getModelServiceLinkRenderingType instead.
      * @return model service link rendering type which is used
      */
     default ModelServiceLinkRendering getModelSericeLinkRenderingType() {
@@ -106,14 +106,13 @@ public interface ApiClient {
 
     /**
      * Returns model service link rendering type.
-     * @Deprecated use getModelServiceLinkRenderingType instead.
      * @return model service link rendering type which is used
      */
     ModelServiceLinkRendering getModelServiceLinkRenderingType();
 
     /**
      * Specify how the model-service plugin renders links.
-     * @Deprecated use setModelServiceLinkRenderingType instead
+     * @deprecated use setModelServiceLinkRenderingType instead
      * @param renderingType which will be used, by default RELATIVE
      */
     default void setModelSericeLinkRenderingType(ModelServiceLinkRendering renderingType) {
