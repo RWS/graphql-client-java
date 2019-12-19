@@ -31,6 +31,9 @@ import com.sdl.web.pca.client.util.CmUri;
 
 /**
  * This interface enables java clients to connect to the GraphQL Service.
+ * This class in not allowed to be reused in any form. Please create
+ * another exemplar any time you want it to use
+ * @see DefaultGraphQLClient defaultHeaders field
  */
 public interface ApiClient {
 
@@ -44,8 +47,7 @@ public interface ApiClient {
 
     /**
      * Sets global context data.
-     *
-     * @param globalContextData
+     * @param globalContextData context with passed claims
      */
     void setGlobalContextData(ContextData globalContextData);
 
@@ -61,85 +63,102 @@ public interface ApiClient {
      * place otherwise its treated as model data and will go through conversion to type specified
      * by DefaultModelType (default: MODEL).
      *
-     * @param contentType
+     * @param contentType which will be used as default
      */
     void setDefaultContentType(ContentType contentType);
 
     /**
-     * Retrurns default model type.
+     * Returns default model type.
      *
-     * @return
+     * @return default model type
      */
     DataModelType getDefaultModelType();
 
     /**
-     * Specify model type to return (default: R2).
+     * Specify model type R2/DD4T to be used
      *
-     * @param dataModelType
+     * @param dataModelType which will be used, by default R2
      */
     void setDefaultModelType(DataModelType dataModelType);
 
     /**
      * Returns tcdl link rendering type.
      *
-     * @return
+     * @return tcdl link rendering type (ABSOLUTE/RELATIVE)
      */
     TcdlLinkRendering getTcdlLinkRenderingType();
 
     /**
-     * Specify how tcdl links get rendered (default: RELATIVE).
+     * Specify how tcdl links get rendered (ABSOLUTE/RELATIVE).
      *
-     * @param tcdlLinkRenderingType
+     * @param tcdlLinkRenderingType which will be used, by default RELATIVE
      */
     void setTcdlLinkRenderingType(TcdlLinkRendering tcdlLinkRenderingType);
 
     /**
      * Returns model service link rendering type.
-     *
-     * @return
+     * @deprecated use getModelServiceLinkRenderingType instead.
+     * @return model service link rendering type which is used
      */
-    ModelServiceLinkRendering getModelSericeLinkRenderingType();
+    default ModelServiceLinkRendering getModelSericeLinkRenderingType() {
+        return getModelServiceLinkRenderingType();
+    }
 
     /**
-     * Specify how the model-service plugin renders links (default: RELATIVE).
-     *
-     * @param modelSericeLinkRenderingType
+     * Returns model service link rendering type.
+     * @return model service link rendering type which is used
      */
-    void setModelSericeLinkRenderingType(ModelServiceLinkRendering modelSericeLinkRenderingType);
+    ModelServiceLinkRendering getModelServiceLinkRenderingType();
+
+    /**
+     * Specify how the model-service plugin renders links.
+     * @deprecated use setModelServiceLinkRenderingType instead
+     * @param renderingType which will be used, by default RELATIVE
+     */
+    default void setModelSericeLinkRenderingType(ModelServiceLinkRendering renderingType) {
+        setModelServiceLinkRenderingType(renderingType);
+    }
+
+    /**
+     * Specify how the model-service plugin renders links.
+     *
+     * @param renderingType which will be used, by default RELATIVE
+     */
+    void setModelServiceLinkRenderingType(ModelServiceLinkRendering renderingType);
 
     /**
      * Returns Url prefix for tcdl links.
      *
-     * @return
+     * @return Url prefix for tcdl links
      */
     String getTcdlLinkUrlPrefix();
 
     /**
      * Specify Url prefix for tcdl links for Absolute rendering type (default: null).
      *
-     * @param tcdlLinkUrlPrefix
+     * @param tcdlLinkUrlPrefix Url prefix for tcdl links for Absolute rendering type
      */
     void setTcdlLinkUrlPrefix(String tcdlLinkUrlPrefix);
 
     /**
      * Returns Url prefix for tcdl binary links.
      *
-     * @return
+     * @return Url prefix for tcdl binary links
      */
     String getTcdlBinaryLinkUrlPrefix();
 
     /**
      * Specify Url prefix for tcdl binary links for Absolute rendering type (default: null).
      *
-     * @param tcdlBinaryLinkUrlPrefix
+     * @param binaryLinksPrefix Url prefix for tcdl binary links for Absolute rendering type
      */
-    void setTcdlBinaryLinkUrlPrefix(String tcdlBinaryLinkUrlPrefix);
+    void setTcdlBinaryLinkUrlPrefix(String binaryLinksPrefix);
 
     /**
-     * Adds default header to reqeust.
+     * Adds default HTTP header to request.
      *
-     * @param header
-     * @param value
+     * @param header header name
+     * @param value header value
      */
     void addDefaultHeader(String header, String value);
 
@@ -237,9 +256,10 @@ public interface ApiClient {
      * @param ns            namespace
      * @param publicationId publication Id
      * @param binaryId      binary Id
+     * @param customMetaFilter custom meta filter criteria
      * @param contextData   context data
      * @return BinaryComponent representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     BinaryComponent getBinaryComponent(ContentNamespace ns, int publicationId, int binaryId, String customMetaFilter,
                                        ContextData contextData) throws ApiClientException;
@@ -250,9 +270,10 @@ public interface ApiClient {
      * @param ns            namespace
      * @param publicationId publication id
      * @param url           binary component url
+     * @param customMetaFilter custom meta filter criteria
      * @param contextData   context data
      * @return BinaryComponent representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     BinaryComponent getBinaryComponent(ContentNamespace ns, int publicationId, String url, String customMetaFilter,
                                        ContextData contextData) throws ApiClientException;
@@ -261,9 +282,10 @@ public interface ApiClient {
      * Retrieves BinaryConponent representation by providing its CMURI.
      *
      * @param cmUri       CMURI of binary component
+     * @param customMetaFilter custom meta filter criteria
      * @param contextData context data
      * @return BinaryComponent representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     BinaryComponent getBinaryComponent(CmUri cmUri, String customMetaFilter, ContextData contextData) throws ApiClientException;
 
@@ -273,10 +295,13 @@ public interface ApiClient {
      * @param filter           specifies filtering parameters for item query
      * @param sort             defines sorting order
      * @param pagination       defines pagination parameter
-     * @param contextData      context data
      * @param customMetaFilter custom metadata filter
+     * @param contentIncludeMode mode to include content
+     * @param includeContainerItems whether include items from container or not
+     * @param contextData      context data
+     *
      * @return ItemConnection object which holds Items
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     ItemConnection executeItemQuery(InputItemFilter filter, InputSortParam sort, Pagination pagination,
                                     String customMetaFilter, ContentIncludeMode contentIncludeMode,
@@ -288,9 +313,9 @@ public interface ApiClient {
      * @param ns               namespace
      * @param publicationId    publication id
      * @param contextData      context data
-     * @param customMetaFilter custom metadata filter
+     * @param customMetaFilter custom metadata filter criteria
      * @return Publication representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     Publication getPublication(ContentNamespace ns, int publicationId, String customMetaFilter,
                                ContextData contextData) throws ApiClientException;
@@ -302,7 +327,7 @@ public interface ApiClient {
      * @param pagination       defines pagination parameter
      * @param filter           defines filtering parameter
      * @param contextData      context data
-     * @param customMetaFilter custom metadata filter
+     * @param customMetaFilter custom metadata filter criteria
      * @return PublicationConnection representation
      */
     PublicationConnection getPublications(ContentNamespace ns, Pagination pagination, InputPublicationFilter filter,
@@ -317,7 +342,7 @@ public interface ApiClient {
      * @param pageId             page id
      * @param renderRelativeLink indicates if it is relative or full link
      * @return page link string
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     String resolvePageLink(ContentNamespace ns, int publicationId, int pageId, boolean renderRelativeLink) throws ApiClientException;
 
@@ -328,10 +353,10 @@ public interface ApiClient {
      * @param publicationId              publication id
      * @param componentId                component id
      * @param sourcePageId               source page id
-     * @param excludeComponentTemplateId exclude compoonent template id
+     * @param excludeComponentTemplateId exclude component template id
      * @param renderRelativeLink         indicates if it is relative or full link
      * @return component link string
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     String resolveComponentLink(ContentNamespace ns, int publicationId, int componentId, Integer sourcePageId,
                                 Integer excludeComponentTemplateId, boolean renderRelativeLink) throws ApiClientException;
@@ -343,9 +368,9 @@ public interface ApiClient {
      * @param publicationId      publication id
      * @param binaryId           binary id
      * @param variantId          variant id
-     * @param renderRelativeLink indicates if it is relative or full link
+     * @param renderRelativeLink indicates whether it is relative or full link
      * @return binary link string
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     String resolveBinaryLink(ContentNamespace ns, int publicationId, int binaryId, String variantId,
                              boolean renderRelativeLink) throws ApiClientException;
@@ -358,9 +383,9 @@ public interface ApiClient {
      * @param pageId             page id
      * @param componentId        component id
      * @param templateId         template id
-     * @param renderRelativeLink indicates if it is relative or full link
+     * @param renderRelativeLink indicates whether it is relative or full link
      * @return dynamic component link string
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     String resolveDynamicComponentLink(ContentNamespace ns, int publicationId, int pageId, int componentId,
                                        int templateId, boolean renderRelativeLink) throws ApiClientException;
@@ -371,7 +396,7 @@ public interface ApiClient {
      * @param ns  namespace
      * @param url url
      * @return PublicationMapping representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     PublicationMapping getPublicationMapping(ContentNamespace ns, String url) throws ApiClientException;
 
@@ -384,9 +409,10 @@ public interface ApiClient {
      * @param contentType   content type
      * @param modelType     data model type
      * @param pageInclusion page inclusion
+     * @param contentIncludeMode include mode for content
      * @param contextData   context data
      * @return json representation of page model
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     JsonNode getPageModelData(ContentNamespace ns, int publicationId, String url, ContentType contentType,
                               DataModelType modelType, PageInclusion pageInclusion, ContentIncludeMode contentIncludeMode,
@@ -401,9 +427,10 @@ public interface ApiClient {
      * @param contentType   content type
      * @param modelType     data model type
      * @param pageInclusion page inclusion
+     * @param contentIncludeMode include mode for content
      * @param contextData   context data
      * @return json representation of page model
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     JsonNode getPageModelData(ContentNamespace ns, int publicationId, int pageId, ContentType contentType,
                               DataModelType modelType, PageInclusion pageInclusion, ContentIncludeMode contentIncludeMode,
@@ -419,9 +446,10 @@ public interface ApiClient {
      * @param contentType   content type
      * @param modelType     model type
      * @param dcpType       dcp type
+     * @param contentIncludeMode include mode for content
      * @param contextData   context data
      * @return json representation of entity model
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     JsonNode getEntityModelData(ContentNamespace ns, int publicationId, int entityId, int templateId,
                                 ContentType contentType,
@@ -436,7 +464,7 @@ public interface ApiClient {
      * @param descendantLevels descendant level
      * @param contextData      context data
      * @return TaxonomySitemapItem representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     TaxonomySitemapItem getSitemap(ContentNamespace ns, int publicationId, int descendantLevels,
                                    ContextData contextData) throws ApiClientException;
@@ -448,9 +476,10 @@ public interface ApiClient {
      * @param publicationId    publication id
      * @param taxonomyNodeId   taxonomy node id
      * @param descendantLevels descendant levels
+     * @param ancestor         ancestor
      * @param contextData      context data
      * @return TaxonomySitemapItem array representation
-     * @throws ApiClientException
+     * @throws ApiClientException in case of exception
      */
     TaxonomySitemapItem[] getSitemapSubtree(ContentNamespace ns, int publicationId, String taxonomyNodeId,
                                             int descendantLevels, Ancestor ancestor,

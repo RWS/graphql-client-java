@@ -17,8 +17,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
@@ -29,9 +29,8 @@ public class DefaultGraphQLClient implements GraphQLClient {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final Authentication auth;
-    private CloseableHttpClient httpClient = null;
     private final String endpoint;
-    private final ConcurrentHashMap<String, String> defaultHeaders = new ConcurrentHashMap<>();
+    private final Map<String, String> defaultHeaders = new HashMap<>();
 
     public DefaultGraphQLClient(String endpoint, Map<String, String> defaultHeaders) {
         this(endpoint, defaultHeaders, null);
@@ -55,13 +54,13 @@ public class DefaultGraphQLClient implements GraphQLClient {
     }
 
     @Override
-    public String execute(String jsonEntity, int timeout) throws UnauthorizedException, GraphQLClientException {
+    public synchronized String execute(String jsonEntity, int timeoutInMillis) throws UnauthorizedException, GraphQLClientException {
         LOG.debug("Requested entity: {}", jsonEntity);
         HttpPost httpPost = new HttpPost(endpoint);
         defaultHeaders.forEach((key, value) -> httpPost.addHeader(key, value));
 
-        if (timeout > 0) {
-            RequestConfig params = RequestConfig.custom().setConnectTimeout(timeout).setSocketTimeout(timeout).build();
+        if (timeoutInMillis > 0) {
+            RequestConfig params = RequestConfig.custom().setConnectTimeout(timeoutInMillis).setSocketTimeout(timeoutInMillis).build();
             httpPost.setConfig(params);
         }
 
@@ -73,7 +72,7 @@ public class DefaultGraphQLClient implements GraphQLClient {
         }
 
         //Execute and get the response.
-        if (httpClient == null) httpClient = createHttpClient();
+        CloseableHttpClient httpClient = createHttpClient();
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             InputStream contentStream = response.getEntity().getContent();
             String contentString = IOUtils.toString(contentStream, "UTF-8");
@@ -81,11 +80,10 @@ public class DefaultGraphQLClient implements GraphQLClient {
                 if (response.getStatusLine().getStatusCode() == SC_UNAUTHORIZED) {
                     throw new UnauthorizedException("Unable to retrieve requested entity, message: " + contentString);
                 }
-                LOG.error("Response code is '" + response.getStatusLine().getStatusCode() +
-                        "'. The response message: " + contentString);
-                throw new GraphQLClientException("Unable to retrieve requested entity");
+                throw new GraphQLClientException("Unable to retrieve requested entity from " + endpoint +
+                        ", due to " + contentString);
             }
-            LOG.debug("Returned message: {}", contentString);
+            LOG.debug("Returned message: {} for a request {}", contentString, jsonEntity);
             return contentString;
         } catch (UnauthorizedException e) {
             throw e;
@@ -104,8 +102,14 @@ public class DefaultGraphQLClient implements GraphQLClient {
         }
     }
 
+    /**
+     * This method is unsafe! It's advised not to use it at all
+     * @deprecated use constructor's header field instead
+     * @param header HTTP Header name
+     * @param value HTTP Header value
+     */
     @Override
-    public void addDefaultHeader(String header, String value) {
+    public synchronized void addDefaultHeader(String header, String value) {
         this.defaultHeaders.put(header, value);
     }
 }

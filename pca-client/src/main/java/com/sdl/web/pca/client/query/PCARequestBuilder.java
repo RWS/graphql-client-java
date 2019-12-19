@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,10 +26,10 @@ import static java.util.regex.Pattern.DOTALL;
 import static java.util.regex.Pattern.MULTILINE;
 
 /**
- * Builder for Public Content API grpaphql request
+ * Builder for Public Content API GraphQL request
  */
 public class PCARequestBuilder {
-    private static final Pattern FRAGMENT_NAMES_FROM_BODY = Pattern.compile("^\\s*[.]{3}(?<fragmentName>\\w*)\\s*$",
+    private static final Pattern FRAGMENT_NAMES_FROM_BODY = Pattern.compile("^\\s*\\.{3}(?<fragmentName>\\w*)\\s*$",
             DOTALL | MULTILINE);
 
     private String query;
@@ -53,7 +54,7 @@ public class PCARequestBuilder {
      * Loads query by given query name.
      *
      * @param queryName query name
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withQuery(String queryName) {
         this.queryName = queryName;
@@ -63,8 +64,8 @@ public class PCARequestBuilder {
     /**
      * Adds namespace value to graphql request.
      *
-     * @param ns
-     * @return
+     * @param ns namespace
+     * @return builder
      */
     public PCARequestBuilder withNamespace(ContentNamespace ns) {
         return withVariable("namespaceId", ns.getNameSpaceValue());
@@ -73,8 +74,8 @@ public class PCARequestBuilder {
     /**
      * Adds publication id value to graphql request.
      *
-     * @param publicationId
-     * @return
+     * @param publicationId publication id
+     * @return builder
      */
     public PCARequestBuilder withPublicationId(int publicationId) {
         return withVariable("publicationId", publicationId);
@@ -83,8 +84,8 @@ public class PCARequestBuilder {
     /**
      * Adds 'filter' variable value to graphql request.
      *
-     * @param filter filter value
-     * @return
+     * @param filter filter criteria
+     * @return builder
      */
     public PCARequestBuilder withInputComponentPresentationFilter(InputComponentPresentationFilter filter) {
         return withVariable("filter", filter);
@@ -93,8 +94,8 @@ public class PCARequestBuilder {
     /**
      * Adds 'inputSortParam' variable value to graphql request.
      *
-     * @param sort
-     * @return
+     * @param sort sorting criteria
+     * @return builder
      */
     public PCARequestBuilder withInputSortParam(InputSortParam sort) {
         return withVariable("inputSortParam", sort);
@@ -103,8 +104,8 @@ public class PCARequestBuilder {
     /**
      * Adds paginatioin variable values 'first' and 'after' to graphql request.
      *
-     * @param pagination
-     * @return
+     * @param pagination pagination
+     * @return builder
      */
     public PCARequestBuilder withPagination(Pagination pagination) {
         if (pagination == null) return this;
@@ -116,8 +117,8 @@ public class PCARequestBuilder {
     /**
      * Adds 'cmUri' variable value to graphql request.
      *
-     * @param cmUri
-     * @return
+     * @param cmUri cm uri
+     * @return builder
      */
     public PCARequestBuilder withCmUri(CmUri cmUri) {
         withVariable("cmUri", cmUri.toString());
@@ -130,7 +131,7 @@ public class PCARequestBuilder {
      * Updates placeholder '@fragmentList' with the given list of fragments.
      *
      * @param injectFragments list of fragments
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withInjectFragments(List<String> injectFragments) {
         if (injectFragments != null) {
@@ -140,11 +141,11 @@ public class PCARequestBuilder {
     }
 
     /**
-     * Loads recurse fragment and applies it to query with given descendant level
+     * Loads recurse fragment and applies it to query with given descendant level.
      *
-     * @param recurseFragmentName
-     * @param descendantLevel
-     * @return
+     * @param recurseFragmentName name of fragment
+     * @param descendantLevel descendant level to dig into
+     * @return builder
      */
     public PCARequestBuilder withRecurseFragment(String recurseFragmentName, int descendantLevel) {
         this.recurseFragmentName = recurseFragmentName;
@@ -157,7 +158,7 @@ public class PCARequestBuilder {
      *
      * @param variable variable name
      * @param value    variable value
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withVariable(String variable, Object value) {
         variables.put(variable, value);
@@ -168,21 +169,26 @@ public class PCARequestBuilder {
      * Adds context data to request
      *
      * @param data array of context data representations to add
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withContextData(ContextData... data) {
         for (ContextData newData : data) {
-            if (newData == null) continue;
-            this.claimValues.putAll(newData.getClaimValues().stream().filter(v -> v != null).collect(Collectors.toMap(x -> x.getUri(), x -> x, (x, y) -> y)));
+            if (newData == null) {
+                continue;
+            }
+            this.claimValues.putAll(newData.getClaimValues()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toMap(ClaimValue::getUri, x -> x, (x, y) -> y)));
         }
         return this;
     }
 
     /**
-     * Adds claim value to context data of request
+     * Adds claim value to context data of request.
      *
-     * @param claim
-     * @return
+     * @param claim claim
+     * @return builder
      */
     public PCARequestBuilder withClaim(ClaimValue claim) {
         this.claimValues.put(claim.getUri(), claim);
@@ -193,7 +199,7 @@ public class PCARequestBuilder {
      * Adds operation name to request.
      *
      * @param operation operation name
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withOperation(String operation) {
         this.operationName = operation;
@@ -204,7 +210,7 @@ public class PCARequestBuilder {
      * Specifies timeout in milliseconds to request.
      *
      * @param timeoutMillis timeout in milliseconds
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withTimeout(int timeoutMillis) {
         this.timeout = timeoutMillis;
@@ -214,8 +220,8 @@ public class PCARequestBuilder {
     /**
      * Updates query with content include mode.
      *
-     * @param contentIncludeMode
-     * @return
+     * @param contentIncludeMode mode to include content
+     * @return builder
      */
     public PCARequestBuilder withContentIncludeMode(ContentIncludeMode contentIncludeMode) {
         if (contentIncludeMode != null) {
@@ -231,9 +237,9 @@ public class PCARequestBuilder {
     /**
      * Includes/excludes region in query based on provided ContentIncludeMode.
      *
-     * @param regionName
-     * @param includeMode
-     * @return
+     * @param regionName region
+     * @param includeMode mode to include content of region
+     * @return builder
      */
     public PCARequestBuilder withIncludeRegion(String regionName, ContentIncludeMode includeMode) {
         return withIncludeRegion(regionName, includeMode != ContentIncludeMode.EXCLUDE);
@@ -242,9 +248,9 @@ public class PCARequestBuilder {
     /**
      * Includes/excludes region in query based on provided boolean value.
      *
-     * @param regionName
-     * @param isInclude
-     * @return
+     * @param regionName region
+     * @param isInclude skip or include region
+     * @return builder
      */
     public PCARequestBuilder withIncludeRegion(String regionName, boolean isInclude) {
         this.includeRegions.put(regionName, isInclude);
@@ -255,7 +261,7 @@ public class PCARequestBuilder {
      * Updates variant args placeholder on query with url.
      *
      * @param url url
-     * @return
+     * @return builder
      */
     public PCARequestBuilder withVariantArgs(String url) {
         this.variantArgs = url;
@@ -265,8 +271,8 @@ public class PCARequestBuilder {
     /**
      * Updates query with custom meta filter.
      *
-     * @param customMetaFilter custom meta filter
-     * @return
+     * @param customMetaFilter custom meta filter criteria
+     * @return builder
      */
     public PCARequestBuilder withCustomMetaFilter(String customMetaFilter) {
         this.customMetaFilter = customMetaFilter;
@@ -276,7 +282,7 @@ public class PCARequestBuilder {
     /**
      * Builds GraphQLRequest instance.
      *
-     * @return
+     * @return request to use with GraphQL
      */
     public GraphQLRequest build() {
 
@@ -294,7 +300,6 @@ public class PCARequestBuilder {
 
         //load all fragments taking into account include content parameter at load time
         query = updateQueryWithFragments(query, includeRegions);
-
 
         //inject variables
         query = QueryUtils.injectRenderContentArgs(query,
@@ -318,7 +323,8 @@ public class PCARequestBuilder {
     }
 
     private String updateWithInjectFragments(Set<String> injectFragments) {
-        String fragmentList = injectFragments.stream()
+        String fragmentList = injectFragments
+                .stream()
                 .map(fragment -> "..." + fragment + "\n")
                 .reduce("", String::concat);
 
@@ -326,21 +332,24 @@ public class PCARequestBuilder {
     }
 
     private String updateQueryWithFragments(String query, Map<String, Boolean> includeRegions) {
-        Map<String, String> fragments = new HashMap<>();
-        fragments = loadFragmentsRecursively(fragments, query, includeRegions);
-        return fragments.values().stream().reduce(query, String::concat);
+        Map<String, String> fragments = loadFragmentsRecursively(new HashMap<>(), query, includeRegions);
+        return fragments
+                .values()
+                .stream()
+                .reduce(query, String::concat);
     }
 
     private Map<String, String> loadFragmentsRecursively(Map<String, String> loadedFragments, String queryPart, Map<String, Boolean> includeRegions) {
         Matcher matcher = FRAGMENT_NAMES_FROM_BODY.matcher(queryPart);
         while (matcher.find()) {
             String fragmentName = matcher.group("fragmentName");
-            if (!loadedFragments.containsKey(fragmentName)) {
-                String fragmentBody = queryHolder.getFragment(fragmentName);
-                fragmentBody = updateWithIncludeRegions(fragmentBody, includeRegions);
-                loadedFragments.put(fragmentName, fragmentBody);
-                loadFragmentsRecursively(loadedFragments, fragmentBody, includeRegions);
+            if (loadedFragments.containsKey(fragmentName)) {
+                continue;
             }
+            String fragmentBody = queryHolder.getFragment(fragmentName);
+            fragmentBody = updateWithIncludeRegions(fragmentBody, includeRegions);
+            loadedFragments.put(fragmentName, fragmentBody);
+            loadFragmentsRecursively(loadedFragments, fragmentBody, includeRegions);
         }
         return loadedFragments;
     }
