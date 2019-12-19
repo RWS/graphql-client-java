@@ -409,6 +409,7 @@ public interface ApiClient {
      * @param contentType   content type
      * @param modelType     data model type
      * @param pageInclusion page inclusion
+     * @param contentIncludeMode include mode for content
      * @param contextData   context data
      * @return json representation of page model
      * @throws ApiClientException in case of exception
@@ -426,6 +427,7 @@ public interface ApiClient {
      * @param contentType   content type
      * @param modelType     data model type
      * @param pageInclusion page inclusion
+     * @param contentIncludeMode include mode for content
      * @param contextData   context data
      * @return json representation of page model
      * @throws ApiClientException in case of exception
@@ -444,6 +446,7 @@ public interface ApiClient {
      * @param contentType   content type
      * @param modelType     model type
      * @param dcpType       dcp type
+     * @param contentIncludeMode include mode for content
      * @param contextData   context data
      * @return json representation of entity model
      * @throws ApiClientException in case of exception
@@ -473,6 +476,7 @@ public interface ApiClient {
      * @param publicationId    publication id
      * @param taxonomyNodeId   taxonomy node id
      * @param descendantLevels descendant levels
+     * @param ancestor         ancestor
      * @param contextData      context data
      * @return TaxonomySitemapItem array representation
      * @throws ApiClientException in case of exception
