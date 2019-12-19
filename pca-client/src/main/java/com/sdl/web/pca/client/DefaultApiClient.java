@@ -127,13 +127,13 @@ public class DefaultApiClient implements ApiClient {
     }
 
     @Override
-    public ModelServiceLinkRendering getModelSericeLinkRenderingType() {
+    public ModelServiceLinkRendering getModelServiceLinkRenderingType() {
         return modelServiceLinkRenderingType;
     }
 
     @Override
-    public void setModelSericeLinkRenderingType(ModelServiceLinkRendering modelSericeLinkRenderingType) {
-        this.modelServiceLinkRenderingType = modelSericeLinkRenderingType;
+    public void setModelServiceLinkRenderingType(ModelServiceLinkRendering renderingType) {
+        this.modelServiceLinkRenderingType = renderingType;
     }
 
     @Override
