@@ -1,5 +1,10 @@
 SDL Dynamic Experience Delivery GraphQL client for Java
 ===
+## Build status
+* Develop - [![Build Status](https://api.travis-ci.com/sdl/graphql-client-java.svg?branch=develop)](https://travis-ci.com/github/sdl/graphql-client-java)
+* 2.2 - [![Build Status](https://api.travis-ci.com/sdl/graphql-client-java.svg?branch=release/2.2)](https://travis-ci.com/github/sdl/graphql-client-java)
+* 1.8 - [![Build Status](https://api.travis-ci.com/sdl/graphql-client-java.svg?branch=release/1.8)](https://travis-ci.com/github/sdl/graphql-client-java)
+
 
 About
 -----
