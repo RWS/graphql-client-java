@@ -4,9 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sdl.web.pca</groupId>
+    <parent>
+        <artifactId>pca-client-parent</artifactId>
+        <groupId>com.sdl.web.pca</groupId>
+        <version>2.2.12-SNAPSHOT</version>
+    </parent>
+
     <artifactId>pca-model-generator</artifactId>
-    <version>2.2.5</version>
+
     <dependencies>
         <dependency>
             <groupId>com.sdl.web.pca</groupId>
@@ -15,12 +20,10 @@
         <dependency>
             <groupId>com.sdl.web.pca</groupId>
             <artifactId>graphql-client</artifactId>
-            <version>2.2.5</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.web.pca</groupId>
             <artifactId>pca-model</artifactId>
-            <version>2.2.5</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
@@ -35,7 +38,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
