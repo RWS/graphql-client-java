@@ -1,6 +1,7 @@
 package com.sdl.web.pca.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.web.pca.client.auth.Authentication;
 import com.sdl.web.pca.client.exception.GraphQLClientException;
@@ -17,8 +18,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
@@ -27,10 +29,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class DefaultGraphQLClient implements GraphQLClient {
     private static final Logger LOG = getLogger(DefaultGraphQLClient.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    static {
+        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        MAPPER.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        MAPPER.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
+    }
 
     private final Authentication auth;
     private final String endpoint;
-    private final Map<String, String> defaultHeaders = new HashMap<>();
+    private final ConcurrentMap<String, String> defaultHeaders = new ConcurrentHashMap<>();
 
     public DefaultGraphQLClient(String endpoint, Map<String, String> defaultHeaders) {
         this(endpoint, defaultHeaders, null);
@@ -54,7 +61,7 @@ public class DefaultGraphQLClient implements GraphQLClient {
     }
 
     @Override
-    public synchronized String execute(String jsonEntity, int timeoutInMillis) throws UnauthorizedException, GraphQLClientException {
+    public String execute(String jsonEntity, int timeoutInMillis) throws UnauthorizedException, GraphQLClientException {
         LOG.debug("Requested entity: {}", jsonEntity);
         HttpPost httpPost = new HttpPost(endpoint);
         defaultHeaders.forEach((key, value) -> httpPost.addHeader(key, value));
@@ -109,7 +116,7 @@ public class DefaultGraphQLClient implements GraphQLClient {
      * @param value HTTP Header value
      */
     @Override
-    public synchronized void addDefaultHeader(String header, String value) {
+    public void addDefaultHeader(String header, String value) {
         this.defaultHeaders.put(header, value);
     }
 }

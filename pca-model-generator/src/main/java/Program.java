@@ -55,26 +55,25 @@ public class Program {
             }
 
             GraphQLClient client = new DefaultGraphQLClient(endpoint, null);
-
+            String jsonResponse = "";
+            String jsonRequest = "";
             try {
                 String query = IOUtils.toString(Program.class.getClassLoader().getResourceAsStream("IntrospectionQuery.graphql"), "UTF-8");
                 JsonObject body = new JsonObject();
                 body.addProperty("query", query);
-                String jsonresponse = client.execute(body.toString());
+                jsonRequest = body.toString();
+                jsonResponse = client.execute(jsonRequest);
                 JsonParser parser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) parser.parse(jsonresponse);
+                JsonObject jsonObject = (JsonObject) parser.parse(jsonResponse);
                 JsonObject dataObject = jsonObject.getAsJsonObject("data").getAsJsonObject("__schema");
                 ObjectMapper objectMapper = new ObjectMapper();
                 GraphQLSchema schema = objectMapper.readValue(dataObject.toString(), GraphQLSchema.class);
 
                 generateSchemaClasses(schema, ns, outputFile);
                 LOG.debug("GraphQL Schema : " + schema.toString());
-            } catch (JsonMappingException e) {
-                throw new GraphQLClientException("JSON Mapping Exception : ", e);
-            } catch (IOException e) {
-                throw new GraphQLClientException("Missing required file : ", e);
             } catch (Exception e) {
-                throw new GraphQLClientException("Exception : ", e);
+                LOG.trace("Cannot generate schema for request '{}' with response '{}'", jsonRequest, jsonResponse, e);
+                throw new GraphQLClientException("JSON Mapping Exception : ", e);
             }
         }
     }
@@ -165,7 +164,7 @@ public class Program {
                 emitFields(sb, type.enumValues, indentCount + 1);
                 break;
             default:
-                System.out.println("oops");
+                System.out.println("oops, unknown type " + type.kind + " for " + type);
                 break;
         }
 
