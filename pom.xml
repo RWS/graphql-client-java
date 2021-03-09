@@ -44,6 +44,13 @@
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
     </properties>
 
+    <scm>
+        <url>https://github.com/sdl/graphql-client-java</url>
+        <connection>scm:git:git@github.com:sdl/graphql-client-java.git</connection>
+        <developerConnection>scm:git:git@github.com:sdl/graphql-client-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
