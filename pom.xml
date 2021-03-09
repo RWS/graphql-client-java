@@ -14,6 +14,7 @@
         <module>graphql-client</module>
         <module>pca-client</module>
         <module>pca-model</module>
+        <module>pca-model-generator</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -128,15 +129,6 @@
             <id>integration-tests</id>
             <modules>
                 <module>pca-integration-tests</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>model-generator</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>pca-model-generator</module>
             </modules>
         </profile>
         <profile>
