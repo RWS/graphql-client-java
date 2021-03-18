@@ -9,7 +9,7 @@
 
     <groupId>com.sdl.web.pca</groupId>
     <artifactId>pca-client-parent</artifactId>
-    <version>2.2.15-SNAPSHOT</version>
+    <version>2.2.15</version>
     <modules>
         <module>graphql-client</module>
         <module>pca-client</module>
@@ -48,7 +48,7 @@
         <url>https://github.com/sdl/graphql-client-java</url>
         <connection>scm:git:git@github.com:sdl/graphql-client-java.git</connection>
         <developerConnection>scm:git:git@github.com:sdl/graphql-client-java.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>DXA_2.2.15</tag>
     </scm>
 
     <dependencyManagement>
