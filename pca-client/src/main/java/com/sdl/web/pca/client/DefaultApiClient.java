@@ -59,7 +59,13 @@ import static com.sdl.web.pca.client.modelserviceplugin.ClaimHelper.createClaimT
 public class DefaultApiClient implements ApiClient {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultApiClient.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(SitemapItem.class, new SitemapDeserializer(SitemapItem.class, MAPPER));
+        module.addDeserializer(ContentComponent.class, new ContentComponentDeserializer(ContentComponent.class, MAPPER));
+        module.addDeserializer(Item.class, new ItemDeserializer(Item.class, MAPPER));
+        MAPPER.registerModule(module);
+    }
     private GraphQLClient client;
     private int requestTimeout;
 
@@ -79,11 +85,6 @@ public class DefaultApiClient implements ApiClient {
         this.client = graphQLClient;
         this.requestTimeout = (int) TimeUnit.MILLISECONDS.toMillis(requestTimeout);
 
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(SitemapItem.class, new SitemapDeserializer(SitemapItem.class, MAPPER));
-        module.addDeserializer(ContentComponent.class, new ContentComponentDeserializer(ContentComponent.class, MAPPER));
-        module.addDeserializer(Item.class, new ItemDeserializer(Item.class, MAPPER));
-        MAPPER.registerModule(module);
     }
 
     @Override
