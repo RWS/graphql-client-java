@@ -71,6 +71,19 @@ public class DefaultApiClient implements ApiClient {
     private String tcdlLinkUrlPrefix = null;
     private String tcdlBinaryLinkUrlPrefix = null;
 
+    static {
+        SimpleModule module = new SimpleModule() {
+            public Object getTypeId() {
+                return DefaultApiClient.class.getName();
+            }
+        };
+        module.addDeserializer(SitemapItem.class, new SitemapDeserializer(SitemapItem.class, MAPPER));
+        module.addDeserializer(ContentComponent.class, new ContentComponentDeserializer(ContentComponent.class, MAPPER));
+        module.addDeserializer(Item.class, new ItemDeserializer(Item.class, MAPPER));
+        MAPPER.registerModule(module);
+        LOG.info("Custom deserializers are loaded");
+    }
+
     public DefaultApiClient(GraphQLClient graphQLClient) {
         this(graphQLClient, 0);
     }
@@ -78,12 +91,6 @@ public class DefaultApiClient implements ApiClient {
     public DefaultApiClient(GraphQLClient graphQLClient, int requestTimeout) {
         this.client = graphQLClient;
         this.requestTimeout = (int) TimeUnit.MILLISECONDS.toMillis(requestTimeout);
-
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(SitemapItem.class, new SitemapDeserializer(SitemapItem.class, MAPPER));
-        module.addDeserializer(ContentComponent.class, new ContentComponentDeserializer(ContentComponent.class, MAPPER));
-        module.addDeserializer(Item.class, new ItemDeserializer(Item.class, MAPPER));
-        MAPPER.registerModule(module);
     }
 
     @Override
