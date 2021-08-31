@@ -1,4 +1,4 @@
-SDL Dynamic Experience Delivery GraphQL client for Java
+RWS Dynamic Experience Delivery GraphQL client for Java
 ===
 ## Build status
 * Develop: ![https://github.com/sdl/graphql-client-java/actions?query=workflow%3A%22Build%22](https://github.com/sdl/graphql-client-java/workflows/Build/badge.svg?branch=develop)
@@ -9,11 +9,11 @@ The GraphQL client provides a public content API for Java in order to retrieve c
 
 Support
 -------
-At SDL we take your investment in Digital Experience very seriously, if you encounter any issues with the Digital Experience Accelerator, please use one of the following channels:
+At RWS we take your investment in Digital Experience very seriously, if you encounter any issues with the Digital Experience Accelerator, please use one of the following channels:
 
 - Report issues directly in [this repository](https://github.com/sdl/graphql-client-java/issues)
-- Ask questions 24/7 on the SDL Tridion Community at https://tridion.stackexchange.com
-- Contact SDL Professional Services for DXA release management support packages to accelerate your support requirements
+- Ask questions 24/7 on the RWS Tridion Community at https://tridion.stackexchange.com
+- Contact RWS Professional Services for DXA release management support packages to accelerate your support requirements
 
 Documentation
 -------------
@@ -42,7 +42,7 @@ Of course, it is also possible (and appreciated) to report an issue without asso
 
 License
 -------
-Copyright (c) 2014-2021 SDL Group.
+Copyright (c) 2014-2021 RWS Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
