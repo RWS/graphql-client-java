@@ -1,6 +1,9 @@
 package com.sdl.web.pca.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.Pagination;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
@@ -25,6 +28,8 @@ import com.sdl.web.pca.client.contentmodel.generated.Publication;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationConnection;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
+import com.sdl.web.pca.client.exception.GraphQLClientException;
+import com.sdl.web.pca.client.exception.UnauthorizedException;
 import com.sdl.web.pca.client.request.GraphQLRequest;
 import com.sdl.web.pca.client.util.CmUri;
 import com.sdl.web.pca.client.util.ItemTypes;
@@ -35,6 +40,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -381,5 +387,48 @@ public class GraphQLClientTest {
         assertEquals("\\", result.getEdges().get(0).getNode().getPublicationPath());
         assertEquals("\\media", result.getEdges().get(0).getNode().getMultimediaPath());
         assertEquals("/media/", result.getEdges().get(0).getNode().getMultimediaUrl());
+    }
+
+    @Test
+    public void executeGenericRequest() throws JsonProcessingException, UnauthorizedException, GraphQLClientException {
+
+        // Array of component Tcms
+        String componentIds[] = { "236", "240", "292", "303", "343" };
+        // Aliased GraphQL query to execute for each component Tcm
+        String componentPresentationQuery = "\ncp{componentId}:componentPresentation(namespaceId:$namespaceId, publicationId:$publicationId, componentId: {componentId}, templateId:$templateId) {\n" +
+                "    \t...ComponentPresentationFields" +
+                "  }\n";
+        // Construct complete query
+        StringBuilder sb= new StringBuilder("query GetAllCps($namespaceId:Int!, $publicationId: Int!, $templateId: Int!) {\n");
+        for (String componentId : componentIds) {
+            sb.append(componentPresentationQuery.replace("{componentId}", componentId));
+        }
+        sb.append("}\n" +
+                "\n" +
+                "fragment ComponentPresentationFields on ComponentPresentation {\n" +
+                "\trawContent(renderContent: true) {\n" +
+                "\t\tdata\n" +
+                "\t}\n" +
+                "}");
+        // Provide variables
+        GraphQLRequest request = new GraphQLRequest(sb.toString(), ImmutableMap.of("namespaceId","1", "publicationId", "5", "templateId", "118"));
+        // Execute
+        String resultString = publicContentApi.execute(request);
+        System.out.println(resultString);
+        // Read JSON result to extract each component presentation
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode resultJson = mapper.readTree(resultString);
+        JsonNode dataNode = resultJson.at("/data");
+        Iterator<JsonNode> componentPresentations = dataNode.elements();
+        componentPresentations.forEachRemaining(componentPresentation -> {
+            System.out.println(componentPresentation.at("/rawContent").at("/data"));
+
+            // Result could be used to retrieve EntityModel ...
+            // JsonNode jsonNode = componentPresentation.at("/rawContent").at("/data");
+            // EntityModelData entityModelData = objectMapper.treeToValue(jsonNode, EntityModelData.class);
+            // return modelBuilderPipeline.createEntityModel(entityModelData, SvbEntityModel.class);
+        });
+
+        assertNotNull(resultJson);
     }
 }

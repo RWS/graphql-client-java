@@ -56,7 +56,7 @@ import static com.sdl.web.pca.client.modelserviceplugin.ClaimHelper.createClaim;
 import static com.sdl.web.pca.client.modelserviceplugin.ClaimHelper.createClaimTcdlBinaryLinkUrlPrefix;
 import static com.sdl.web.pca.client.modelserviceplugin.ClaimHelper.createClaimTcdlLinkUrlPrefix;
 
-public class DefaultApiClient implements ApiClient {
+public class DefaultApiClient implements ApiClient, GraphQLClient {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultApiClient.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -166,6 +166,21 @@ public class DefaultApiClient implements ApiClient {
     @Override
     public void addDefaultHeader(String header, String value) {
         this.client.addDefaultHeader(header, value);
+    }
+
+    @Override
+    public String execute(String jsonEntity, int timeout) throws UnauthorizedException, GraphQLClientException {
+        return client.execute(jsonEntity, timeout);
+    }
+
+    @Override
+    public String execute(String jsonEntity) throws UnauthorizedException, GraphQLClientException {
+        return client.execute(jsonEntity);
+    }
+
+    @Override
+    public String execute(GraphQLRequest request) throws UnauthorizedException, GraphQLClientException {
+        return client.execute(request);
     }
 
     @Override
