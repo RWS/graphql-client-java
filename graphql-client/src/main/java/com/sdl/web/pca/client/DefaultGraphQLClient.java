@@ -8,6 +8,7 @@ import com.sdl.web.pca.client.exception.GraphQLClientException;
 import com.sdl.web.pca.client.exception.UnauthorizedException;
 import com.sdl.web.pca.client.request.GraphQLRequest;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -15,9 +16,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -52,7 +55,25 @@ public class DefaultGraphQLClient implements GraphQLClient {
     }
 
     public CloseableHttpClient createHttpClient() {
+        HttpHost proxy = createProxy();
+        if (proxy != null) {
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            return HttpClients.custom().setRoutePlanner(routePlanner).build();
+        }
         return HttpClients.createDefault();
+    }
+
+    public HttpHost createProxy() {
+        boolean secure = endpoint.toLowerCase(Locale.ROOT).startsWith("https");
+        String proxyHost = secure ? System.getProperty("https.proxyHost") : System.getProperty("http.proxyHost");
+        if (proxyHost != null) {
+            String proxyPort = secure ? System.getProperty("https.proxyPort") : System.getProperty("http.proxyPort");
+            return new HttpHost(
+                    proxyHost,
+                    proxyPort != null ? Integer.parseInt(proxyPort) : -1,
+                    secure ? "https" : "http");
+        }
+        return null;
     }
 
     @Override
