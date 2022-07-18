@@ -68,10 +68,8 @@ public class DefaultGraphQLClient implements GraphQLClient {
         String proxyHost = secure ? System.getProperty("https.proxyHost") : System.getProperty("http.proxyHost");
         if (proxyHost != null) {
             String proxyPort = secure ? System.getProperty("https.proxyPort") : System.getProperty("http.proxyPort");
-            return new HttpHost(
-                    proxyHost,
-                    proxyPort != null ? Integer.parseInt(proxyPort) : -1,
-                    secure ? "https" : "http");
+            LOG.info("Creating proxy with Host [" + proxyHost +"] and Port [" + proxyPort + "] for Endpoint [" + endpoint + "]");
+            return new HttpHost(proxyHost, proxyPort != null ? Integer.parseInt(proxyPort) : -1);
         }
         return null;
     }
