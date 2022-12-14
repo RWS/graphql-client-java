@@ -99,7 +99,9 @@ public class DefaultGraphQLClient implements GraphQLClient {
 
         //Execute and get the response.
         CloseableHttpClient httpClient = createHttpClient();
+        LOG.trace("Before call to Tridion content service: System.currentTimeMillis --> " + System.currentTimeMillis() + " --> endpoint (" + endpoint + ") --> jsonEntity (" + jsonEntity + ")");
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            LOG.trace("After call to Tridion content service: System.currentTimeMillis --> " + System.currentTimeMillis() + " --> endpoint (" + endpoint + ") --> jsonEntity (" + jsonEntity + ")");
             InputStream contentStream = response.getEntity().getContent();
             String contentString = IOUtils.toString(contentStream, "UTF-8");
             if (response.getStatusLine().getStatusCode() != SC_OK) {
